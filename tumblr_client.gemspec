@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), 'lib/tumblr/version')
 
 Gem::Specification.new do |gem|
   gem.add_dependency 'faraday'
-  gem.add_dependency 'faraday_middleware'
   gem.add_dependency 'json'
   gem.add_dependency 'simple_oauth'
   gem.add_dependency 'oauth'
