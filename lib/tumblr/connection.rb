@@ -7,7 +7,7 @@ require 'forwardable'
 # to remove dependency on deprecated faraday middleware gem
 module FaradayMiddleware
   class OAuth < Faraday::Middleware
-    dependency 'simple_oauth'
+    require 'simple_oauth'
     AUTH_HEADER = 'Authorization'
     CONTENT_TYPE = 'Content-Type'
     TYPE_URLENCODED = 'application/x-www-form-urlencoded'
@@ -181,9 +181,7 @@ module FaradayMiddleware
 
   # Public: Parse response bodies as JSON.
   class ParseJson < ResponseMiddleware
-    dependency do
-      require 'json' unless defined?(::JSON)
-    end
+    require 'json' unless defined?(::JSON)
 
     define_parser do |body, parser_options|
       ::JSON.parse(body, parser_options || {}) unless body.strip.empty?
