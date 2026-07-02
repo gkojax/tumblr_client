@@ -1,56 +1,56 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは Claude Code（claude.ai/code）がこのリポジトリで作業する際のガイダンスを提供します。
 
-## Quick Commands
+## クイックコマンド
 
 ```bash
-# Run all tests
+# 全テスト実行
 bundle exec rspec spec
 
-# Run a single test file
+# 単一テストファイル実行
 bundle exec rspec spec/examples/client_spec.rb
 
-# Run a single test
+# 単一テスト実行
 bundle exec rspec spec/examples/client_spec.rb:42
 
-# Build the gem
+# gem をビルド
 rake build
 
-# Release (tags, pushes tags, and publishes to rubygems.org)
+# リリース（タグ作成、リモート push、rubygems.org に公開）
 rake release
 
-# Install locally
+# ローカルにインストール
 gem install pkg/tumblr_client-*.gem
 ```
 
-## Architecture Overview
+## アーキテクチャ概要
 
-**tumblr_client** is an OAuth-authenticated HTTP wrapper for the Tumblr v2 API. It does **not** handle OAuth flow; users must complete the 3-legged OAuth handshake themselves using the Ruby OAuth gem.
+**tumblr_client** は Tumblr v2 API への OAuth 認証 HTTP ラッパーです。OAuth フロー自体は実装しておらず、ユーザーが Ruby OAuth gem を使用して 3-legged OAuth ハンドシェイクを完了し、このクライアントを設定する必要があります。
 
-### Core Design
+### コア設計
 
-The `Tumblr::Client` class acts as a composable interface that includes multiple modules, each grouping related API methods:
+`Tumblr::Client` クラスは複数のモジュールを include する合成インターフェースであり、各モジュールが関連する API メソッドをグループ化しています：
 
-- **`Blog`** — Blog info, posts, queues, drafts, followers, settings
-- **`User`** — User info, limits, preferences
-- **`Post`** — Post creation (text, photo, video, audio, quote, link, chat)
-- **`Tagged`** — Search posts by tag
-- **`Request`** — Request building and HTTP execution
-- **`Connection`** — Faraday setup and credential management
+- **`Blog`** — ブログ情報、投稿、キュー、下書き、フォロワー、設定
+- **`User`** — ユーザー情報、制限、プリファレンス
+- **`Post`** — 投稿作成（テキスト、画像、動画、音声、引用、リンク、チャット）
+- **`Tagged`** — タグで投稿を検索
+- **`Request`** — リクエスト構築と HTTP 実行
+- **`Connection`** — Faraday セットアップと認証情報管理
 
-### Request Flow
+### リクエストフロー
 
-1. User calls a method on `Client` (e.g., `client.info`)
-2. Method is defined in one of the mixin modules (e.g., `User#info`)
-3. Method builds request parameters and calls internal `#request` method (from `Request` mixin)
-4. `#request` uses the connection (Faraday) to execute the HTTP call with OAuth signing
-5. Faraday 2.x middleware (oauth_signature, url_encoded, json) handles OAuth signing and serialization
-6. Response is parsed as JSON and returned as a Hash
+1. ユーザーが `Client` のメソッドを呼び出す（例：`client.info`）
+2. メソッドはミックスインモジュールの1つで定義される（例：`User#info`）
+3. メソッドはリクエストパラメータを構築し、内部の `#request` メソッドを呼び出す（`Request` ミックスインから）
+4. `#request` は接続（Faraday）を使用して OAuth 署名付き HTTP 呼び出しを実行
+5. Faraday 2.x ミドルウェア（oauth_signature、url_encoded、json）が OAuth 署名とシリアライゼーションを処理
+6. レスポンスは JSON として解析され、Hash として返される
 
-### Configuration Flow
+### 設定フロー
 
-Global configuration is set via `Tumblr.configure` block:
+グローバル設定は `Tumblr.configure` ブロック経由で設定されます：
 
 ```ruby
 Tumblr.configure do |config|
@@ -61,27 +61,28 @@ Tumblr.configure do |config|
 end
 ```
 
-Per-client overrides are passed to `Tumblr::Client.new`:
+クライアント毎の設定オーバーライドは `Tumblr::Client.new` に渡されます：
 
 ```ruby
 client = Tumblr::Client.new(consumer_key: "...", oauth_token: "...")
 ```
 
-## Testing Conventions
+## テスト慣例
 
-- **RSpec** is the test framework
-- **WebMock** mocks HTTP responses; real API calls should never be made in tests
-- **SimpleCov** tracks coverage
-- Test files mirror module names: `spec/examples/{blog,user,post,tagged,client,request}_spec.rb`
+- **RSpec** はテストフレームワーク
+- **WebMock** は HTTP レスポンスをモック；テストで実 API を呼び出さない
+- **SimpleCov** はカバレッジを追跡
+- テストファイルはモジュール名をミラー：`spec/examples/{blog,user,post,tagged,client,request}_spec.rb`
 
-When adding API endpoints:
+API エンドポイント追加時：
 
-1. Write test first using WebMock to mock the expected request/response
-2. Implement the method in the appropriate module (`Blog`, `User`, `Post`, `Tagged`)
-3. Method should call `#request` with the HTTP verb and path
-4. Add parameters as keyword arguments, building the request params hash
+1. WebMock を使用してリクエスト/レスポンスをモックするテストを最初に書く
+2. 適切なモジュール（`Blog`、`User`、`Post`、`Tagged`）にメソッドを実装
+3. メソッドは HTTP メソッドとパスを指定して `#request` を呼び出す
+4. `spec/examples/` に WebMock スタブを使用した対応するテストを追加
+5. SimpleCov でカバレッジが 80% 以上を保つことを確認
 
-### Example Test Pattern
+### テストパターン例
 
 ```ruby
 describe Tumblr::Blog do
@@ -99,35 +100,35 @@ describe Tumblr::Blog do
 end
 ```
 
-## Key Files
+## 主要ファイル
 
-| File | Purpose |
+| ファイル | 目的 |
 |------|---------|
-| `lib/tumblr/client.rb` | Main class; includes all mixin modules |
-| `lib/tumblr/config.rb` | Global configuration management |
-| `lib/tumblr/connection.rb` | Faraday HTTP setup with OAuth middleware |
-| `lib/tumblr/request.rb` | Request execution; internal request building and response handling |
-| `lib/tumblr/{blog,user,post,tagged}.rb` | API endpoint methods grouped by domain |
-| `lib/tumblr/helpers.rb` | Shared utility functions |
-| `spec/spec_helper.rb` | RSpec configuration and shared setup |
-| `spec/examples/*_spec.rb` | API method tests using WebMock |
+| `lib/tumblr/client.rb` | メインクラス；全ミックスインモジュールを include |
+| `lib/tumblr/config.rb` | グローバル設定管理 |
+| `lib/tumblr/connection.rb` | Faraday HTTP セットアップと OAuth ミドルウェア |
+| `lib/tumblr/request.rb` | リクエスト実行；内部リクエスト構築とレスポンス処理 |
+| `lib/tumblr/{blog,user,post,tagged}.rb` | API エンドポイントメソッド（ドメイン別グループ化） |
+| `lib/tumblr/helpers.rb` | 共有ユーティリティ関数 |
+| `spec/spec_helper.rb` | RSpec 設定と共有セットアップ |
+| `spec/examples/*_spec.rb` | WebMock を使用した API メソッドテスト |
 
-## Important Notes
+## 重要な注記
 
-- **Git Config**: Add `.claude/` to `.gitignore` to exclude local Claude Code settings from commits.
-- **OAuth Handling**: This gem does not implement the 3-legged OAuth flow. Consumers must use the Ruby OAuth gem to obtain tokens and then configure this client.
-- **Faraday Adapter**: Users can specify a custom Faraday HTTP adapter when creating a client: `Tumblr::Client.new(client: :httpclient)`
-- **API Host**: Default is `api.tumblr.com`. Can be overridden via `TUMBLR_API_HOST` environment variable or per-client option.
-- **Ruby Versions**: Supports Ruby 1.9.x through 3.x (CI tests 2.6, 2.7, 3.0)
+- **Git 設定**: `.claude/` を `.gitignore` に追加し、ローカルの Claude Code 設定をコミットから除外
+- **OAuth 処理**: このgem は 3-legged OAuth フロー自体は実装しません。ユーザーは Ruby OAuth gem を使用してトークンを取得し、このクライアントを設定する必要があります
+- **Faraday アダプタ**: クライアント作成時にカスタム Faraday HTTP アダプタを指定できます：`Tumblr::Client.new(client: :httpclient)`
+- **API ホスト**: デフォルトは `api.tumblr.com`。`TUMBLR_API_HOST` 環境変数またはクライアント毎オプションで上書き可能
+- **Ruby バージョン**: Ruby 1.9.x～3.x をサポート（CI テスト：2.6、2.7、3.0）
 
-## Adding New API Endpoints
+## 新しい API エンドポイント追加
 
-Reference: https://www.tumblr.com/docs/en/api/v2 (official) and https://github.com/tumblr/docs (GitHub repository)
+参考：https://www.tumblr.com/docs/en/api/v2（公式）および https://github.com/tumblr/docs（GitHub リポジトリ）
 
-When wrapping new Tumblr API endpoints:
+新しい Tumblr API エンドポイントをラップする場合：
 
-1. Determine the domain: Blog, User, Post, or create a new module if needed
-2. Add the method to the appropriate module in `lib/tumblr/`
-3. Use `#request(method, path, params)` to execute HTTP calls
-4. Add corresponding test in `spec/examples/` with WebMock stubs
-5. Verify coverage remains >80% with SimpleCov
+1. ドメインを決定：Blog、User、Post、または必要に応じて新規モジュール作成
+2. `lib/tumblr/` の適切なモジュールにメソッドを追加
+3. `#request(method, path, params)` を使用して HTTP 呼び出しを実行
+4. `spec/examples/` に WebMock スタブを使用した対応するテストを追加
+5. SimpleCov でカバレッジが 80% 以上を保つことを確認
