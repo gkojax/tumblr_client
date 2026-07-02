@@ -1,5 +1,5 @@
 require 'faraday'
-require 'faraday_middleware'
+require 'forwardable'
 
 module Tumblr
   module Connection

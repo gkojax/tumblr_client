@@ -102,7 +102,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/following", limit: 1).and_return('response')
+        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/following", {
+          :limit => 1
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.blog_following blog_name, limit: 1
@@ -122,7 +124,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/followed_by", query: other_blog_name).and_return('response')
+        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/followed_by", {
+          :query => other_blog_name
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.followed_by blog_name, other_blog_name
@@ -229,7 +233,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/notes", id: post_id).and_return('response')
+        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/notes", {
+          :id => post_id
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.notes blog_name, post_id
@@ -283,7 +289,10 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:post).once.with("v2/blog/#{blog_name}/posts/queue/reorder", post_id: 1, insert_after: 2).and_return('response')
+        expect(client).to receive(:post).once.with("v2/blog/#{blog_name}/posts/queue/reorder", {
+          :post_id => 1,
+          :insert_after => 2
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.reorder_queue blog_name, post_id: 1, insert_after: 2
@@ -312,7 +321,9 @@ describe Tumblr::Blog do
     context 'with valid parameters' do
       it 'should construct the request properly' do
         timestamp = Time.now.to_i
-        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/notifications", before: timestamp).and_return('response')
+        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/notifications", {
+          :before => timestamp
+        }).and_return('response')
         r = client.notifications blog_name, before: timestamp
         expect(r).to eq('response')
       end
@@ -330,7 +341,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/blocks", limit: 1).and_return('response')
+        expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/blocks", {
+          :limit => 1
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.blocks blog_name, limit: 1
@@ -350,7 +363,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:post).once.with("v2/blog/#{blog_name}/blocks", blocked_tumblelog: other_blog_name).and_return('response')
+        expect(client).to receive(:post).once.with("v2/blog/#{blog_name}/blocks", {
+          :blocked_tumblelog => other_blog_name
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.block blog_name, other_blog_name
@@ -370,7 +385,9 @@ describe Tumblr::Blog do
 
     context 'with valid parameters' do
       before do
-        expect(client).to receive(:delete).once.with("v2/blog/#{blog_name}/blocks", blocked_tumblelog: other_blog_name).and_return('response')
+        expect(client).to receive(:delete).once.with("v2/blog/#{blog_name}/blocks", {
+          :blocked_tumblelog => other_blog_name
+        }).and_return('response')
       end
       it 'should construct the request properly' do
         r = client.unblock blog_name, other_blog_name
