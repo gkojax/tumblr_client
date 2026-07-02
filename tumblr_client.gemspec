@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'webmock'
   gem.add_development_dependency 'simplecov'
+  gem.add_development_dependency 'ostruct', '>= 0.4.0'
   gem.authors = ['John Bunting', 'John Crepezzi']
   gem.description = %q{A Ruby wrapper for the Tumblr v2 API}
   gem.email = ['codingjester@gmail.com', 'john@crepezzi.com']
