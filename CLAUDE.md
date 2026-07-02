@@ -5,8 +5,11 @@
 ## クイックコマンド
 
 ```bash
+# 初期セットアップ
+bundle install
+
 # 全テスト実行
-bundle exec rspec spec
+rake test
 
 # 単一テストファイル実行
 bundle exec rspec spec/examples/client_spec.rb
@@ -25,6 +28,8 @@ gem install pkg/tumblr_client-*.gem
 ```
 
 ## アーキテクチャ概要
+
+**Ruby バージョン**: 2.7、3.0 以上を推奨（CI テスト対象：2.6、2.7、3.0）
 
 **tumblr_client** は Tumblr v2 API への OAuth 認証 HTTP ラッパーです。OAuth フロー自体は実装しておらず、ユーザーが Ruby OAuth gem を使用して 3-legged OAuth ハンドシェイクを完了し、このクライアントを設定する必要があります。
 
@@ -115,6 +120,7 @@ end
 
 ## 重要な注記
 
+- **初期セットアップ**: `bundle install` を実行して依存 gem をインストール
 - **Git 設定**: `.claude/` を `.gitignore` に追加し、ローカルの Claude Code 設定をコミットから除外
 - **OAuth 処理**: このgem は 3-legged OAuth フロー自体は実装しません。ユーザーは Ruby OAuth gem を使用してトークンを取得し、このクライアントを設定する必要があります
 - **Faraday アダプタ**: クライアント作成時にカスタム Faraday HTTP アダプタを指定できます：`Tumblr::Client.new(client: :httpclient)`
