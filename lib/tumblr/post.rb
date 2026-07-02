@@ -114,21 +114,19 @@ module Tumblr
     def extract_data!(options)
       if options.has_key?(:data)
         data = options.delete :data
-        
+
         if Array === data
           data.each.with_index do |filepath, idx|
-            if filepath.is_a?(Faraday::UploadIO)
-              options["data[#{idx}]"] = filepath
+            if filepath.is_a?(String)
+              options["data[#{idx}]"] = File.open(filepath)
             else
-              mime_type = extract_mimetype(filepath)
-              options["data[#{idx}]"] = Faraday::UploadIO.new(filepath, mime_type)
+              options["data[#{idx}]"] = filepath
             end
           end
-        elsif data.is_a?(Faraday::UploadIO)
-          options["data"] = data
+        elsif data.is_a?(String)
+          options["data"] = File.open(data)
         else
-          mime_type = extract_mimetype(data)
-          options["data"] = Faraday::UploadIO.new(data, mime_type)
+          options["data"] = data
         end
       end
     end
