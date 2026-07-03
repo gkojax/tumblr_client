@@ -12,4 +12,7 @@ Gemfile.lock
 
 .bundle
 .claude/
+!.claude/skills/
+!.claude/agents/
+!.mcp.json
 CLAUDE.md

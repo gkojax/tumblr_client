@@ -1,4 +1,31 @@
 {
   "language": "japanese",
-  "defaultModel": "claude-haiku-4-5-20251001"
+  "defaultModel": "claude-haiku-4-5-20251001",
+  "hooks": {
+    "postToolUse": [
+      {
+        "tool": "Edit",
+        "pattern": "lib/.*\\.rb",
+        "command": "bundle exec rubocop -A {file}",
+        "description": "RuboCop 自動整形"
+      },
+      {
+        "tool": "Edit",
+        "pattern": "spec/.*_spec\\.rb",
+        "command": "bundle exec rspec {file}",
+        "description": "テスト検証"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "Read",
+      "Bash(bundle exec rspec:*)",
+      "Bash(bundle exec rubocop:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
 }
