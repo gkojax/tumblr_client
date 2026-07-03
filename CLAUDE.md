@@ -121,13 +121,16 @@ end
 ## 重要な注記
 
 - **初期セットアップ**: `bundle install` を実行して依存 gem をインストール
-- **Git 設定**: `.claude/` を `.gitignore` に追加し、ローカルの Claude Code 設定をコミットから除外
+- **Faraday 2.x OAuth**: カスタム `Tumblr::Middleware::OauthSignature` を使用。詳細は `lib/tumblr/middleware/oauth_signature.rb` 参照
+- **Git 設定**: `.claude/`、`.mcp.json`、`CLAUDE.md` はすべて `.gitignore` で除外。ユーザー環境固有の設定のため push しない
 - **OAuth 処理**: このgem は 3-legged OAuth フロー自体は実装しません。ユーザーは Ruby OAuth gem を使用してトークンを取得し、このクライアントを設定する必要があります
 - **Faraday アダプタ**: クライアント作成時にカスタム Faraday HTTP アダプタを指定できます：`Tumblr::Client.new(client: :httpclient)`
 - **API ホスト**: デフォルトは `api.tumblr.com`。`TUMBLR_API_HOST` 環境変数またはクライアント毎オプションで上書き可能
 - **Ruby バージョン**: Ruby 1.9.x～3.x をサポート（CI テスト：2.6、2.7、3.0）
 
 ## 新しい API エンドポイント追加
+
+**スキルで自動化**: `/endpoint-generator <domain> <endpoint_name>` で実装スケルトン生成、`/test-from-stub <path> <method>` でテスト生成
 
 参考：https://www.tumblr.com/docs/en/api/v2（公式）および https://github.com/tumblr/docs（GitHub リポジトリ）
 
