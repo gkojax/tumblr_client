@@ -45,7 +45,7 @@ The `Tumblr::Client` class acts as a composable interface that includes multiple
 2. Method is defined in one of the mixin modules (e.g., `User#info`)
 3. Method builds request parameters and calls internal `#request` method (from `Request` mixin)
 4. `#request` uses the connection (Faraday) to execute the HTTP call with OAuth signing
-5. Faraday 2.x middleware (oauth_signature, url_encoded, json) handles OAuth signing and serialization
+5. Faraday middleware (oauth, multipart, url_encoded, json) handles serialization and signing
 6. Response is parsed as JSON and returned as a Hash
 
 ### Configuration Flow
@@ -114,15 +114,12 @@ end
 
 ## Important Notes
 
-- **Git Config**: Add `.claude/` to `.gitignore` to exclude local Claude Code settings from commits.
 - **OAuth Handling**: This gem does not implement the 3-legged OAuth flow. Consumers must use the Ruby OAuth gem to obtain tokens and then configure this client.
 - **Faraday Adapter**: Users can specify a custom Faraday HTTP adapter when creating a client: `Tumblr::Client.new(client: :httpclient)`
 - **API Host**: Default is `api.tumblr.com`. Can be overridden via `TUMBLR_API_HOST` environment variable or per-client option.
 - **Ruby Versions**: Supports Ruby 1.9.x through 3.x (CI tests 2.6, 2.7, 3.0)
 
 ## Adding New API Endpoints
-
-Reference: https://www.tumblr.com/docs/en/api/v2 (official) and https://github.com/tumblr/docs (GitHub repository)
 
 When wrapping new Tumblr API endpoints:
 
