@@ -122,6 +122,7 @@ end
 
 - **初期セットアップ**: `bundle install` を実行して依存 gem をインストール
 - **Faraday 2.x OAuth**: カスタム `Tumblr::Middleware::OauthSignature` を使用。詳細は `lib/tumblr/middleware/oauth_signature.rb` 参照
+- **GitHub 操作**: このプロジェクトでは GitHub を使用します。PR 作成、ブランチ管理、リリースなどに `gh` コマンド使用可
 - **Git 設定**: `.claude/`、`.mcp.json`、`CLAUDE.md` はすべて `.gitignore` で除外。ユーザー環境固有の設定のため push しない
 - **OAuth 処理**: このgem は 3-legged OAuth フロー自体は実装しません。ユーザーは Ruby OAuth gem を使用してトークンを取得し、このクライアントを設定する必要があります
 - **Faraday アダプタ**: クライアント作成時にカスタム Faraday HTTP アダプタを指定できます：`Tumblr::Client.new(client: :httpclient)`
