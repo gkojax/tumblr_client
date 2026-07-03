@@ -29,7 +29,7 @@ gem install pkg/tumblr_client-*.gem
 
 ## アーキテクチャ概要
 
-**Ruby バージョン**: 2.7、3.0 以上を推奨（CI テスト対象：2.6、2.7、3.0）
+**Ruby バージョン**: 2.7、3.0 以上を推奨（CI テスト対象：2.6、2.7、3.0、4.0）
 
 **tumblr_client** は Tumblr v2 API への OAuth 認証 HTTP ラッパーです。OAuth フロー自体は実装しておらず、ユーザーが Ruby OAuth gem を使用して 3-legged OAuth ハンドシェイクを完了し、このクライアントを設定する必要があります。
 
