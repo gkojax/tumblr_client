@@ -22,7 +22,7 @@ module Tumblr
 
       Faraday.new(default_options.merge(options)) do |conn|
         unless credentials.empty?
-          conn.request :oauth_signature, creds
+          conn.use Tumblr::Middleware::OauthSignature, creds
         end
         conn.request :url_encoded
         conn.response :json, :content_type => /\bjson$/
