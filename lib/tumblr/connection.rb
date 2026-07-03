@@ -1,6 +1,7 @@
 require 'faraday'
 require 'forwardable'
 require 'simple_oauth'
+require_relative 'middleware/oauth_signature'
 
 module Tumblr
   module Connection
@@ -21,7 +22,7 @@ module Tumblr
 
       Faraday.new(default_options.merge(options)) do |conn|
         unless credentials.empty?
-          conn.request :oauth_signature, creds
+          conn.request Tumblr::Middleware::OauthSignature, creds
         end
         conn.request :url_encoded
         conn.response :json, :content_type => /\bjson$/
