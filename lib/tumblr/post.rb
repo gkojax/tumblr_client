@@ -118,17 +118,21 @@ module Tumblr
         if Array === data
           data.each.with_index do |filepath, idx|
             if filepath.is_a?(String)
-              options["data[#{idx}]"] = File.open(filepath)
+              options["data[#{idx}]"] = upload_part(filepath)
             else
               options["data[#{idx}]"] = filepath
             end
           end
         elsif data.is_a?(String)
-          options["data"] = File.open(data)
+          options["data"] = upload_part(data)
         else
           options["data"] = data
         end
       end
+    end
+
+    def upload_part(filepath)
+      Faraday::Multipart::FilePart.new(filepath, extract_mimetype(filepath))
     end
 
     def extract_mimetype(filepath)

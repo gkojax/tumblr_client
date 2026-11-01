@@ -1,4 +1,5 @@
 require 'faraday'
+require 'faraday/multipart'
 require 'forwardable'
 require 'simple_oauth'
 require_relative 'middleware/oauth_signature'
@@ -24,6 +25,7 @@ module Tumblr
         unless credentials.empty?
           conn.use Tumblr::Middleware::OauthSignature, creds
         end
+        conn.request :multipart
         conn.request :url_encoded
         conn.response :json, :content_type => /\bjson$/
         conn.adapter client
